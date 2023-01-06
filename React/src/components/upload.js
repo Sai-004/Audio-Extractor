@@ -12,8 +12,9 @@ export const Upload = () => {
     e.preventDefault();
     const date = JSON.stringify(new Date());
     // console.log({url})
-    const urldata = { filename, date }
-    fetch("http://localhost:8000/files", {
+    //TODO need to upload file not the file name
+    const urldata = {file}
+    fetch("http://localhost:8000/api", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(urldata)
