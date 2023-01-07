@@ -7,7 +7,7 @@ export const PrevUploads = () => {
     const [fileinfo, fileinfochange] = useState(null);
 
     useEffect(() => {
-        fetch("http://localhost:8000/files").then((res) => {
+        fetch("http://localhost:8000/api").then((res) => {
             return res.json();
         }).then((resp) => {
             fileinfochange(resp);
