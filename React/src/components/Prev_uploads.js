@@ -31,22 +31,24 @@ export const PrevUploads = () => {
                             <thead className="bg-dark text-white">
                                 <tr>
                                     <td>ID</td>
-                                    <td>Name</td>
+                                    <td>Audio File</td>
                                     <td>Duration</td>
                                     <td>Upload Date</td>
-                                    <td>Action</td>
+                                    <td>Actions</td>
                                 </tr>
                             </thead>
                             <tbody>
 
                                 {fileinfo &&
-                                    fileinfo.map(item => (
+                                    fileinfo.map((item,id_no) => (
                                         <tr key={item.id}>
+                                            <td>{++id_no}</td>
                                             <td>{item.id}</td>
-                                            <td>{item.filename}</td>
-                                            <td>{item.duration}</td>
-                                            <td>{item.date}</td>
-                                            <td><a className="btn btn-success">Remove</a>
+                                            <td>-</td>
+                                            <td>{item.uploaded_on}</td>
+                                            <td>
+                                                <Link className='btn btn-success' to="/player">Play</Link>
+                                                <Link className='btn btn-danger' to="">Remove</Link>
                                             </td>
                                         </tr>
                                     ))

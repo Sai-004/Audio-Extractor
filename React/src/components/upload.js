@@ -19,15 +19,10 @@ export const Upload = () => {
     }).then((res) => {
       alert('Uploaded successfully.')
       console.log(res)
-      // navigate('/prev_uploads')
+      navigate('/prev_uploads')
     }).catch((err => {
       console.log(err.message)
     }))
-  }
-
-  const getsong = () => {
-    console.log('clicked get');
-    fetch("http://localhost:8000/api/")
   }
 
   return (
