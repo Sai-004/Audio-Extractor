@@ -4,21 +4,22 @@ import { useNavigate } from 'react-router-dom'
 
 export const Upload = () => {
 
-  const [filename, setUrl] = useState("")
-  const [file,setFile]=useState()
+  const [url, setUrl] = useState("")
+  const [files,setFile]=useState()
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const date = JSON.stringify(new Date());
-    // console.log({url})
-    const urldata = { filename, date }
+    console.log({url});
+    const uploadData = new FormData();
+    uploadData.append('url',url);
+    uploadData.append('files',files,files.name);
     fetch("http://localhost:8000/files", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(urldata)
+      body: uploadData
     }).then((res) => {
-      alert('URL entered.')
+      alert('Uploaded successfully.')
       navigate('/prev_uploads')
     }).catch((err => {
       console.log(err.message)
@@ -30,18 +31,15 @@ export const Upload = () => {
         <div className="card">
           <div className='card-title'>
             <h2>Upload</h2>
-            <div className=''></div>
-            <form onSubmit={handleSubmit}>
               <label>
                 URL:
-                <input value={filename} type="url" name="name" onChange={e => setUrl(e.target.value) || ""} />
+                <input value={url} type="url" name="name" onChange={e => setUrl(e.target.value) || ""} />
               </label>
               <label>
                 Choose a video file:
-                <input type="file" value={file} onChange={e=> setFile(e.target.files[0]) || ""} />
+                <input type="file" value={files} onChange={e=> setFile(e.target.files[0]) || ""} />
               </label>
-              <input type="submit" value="Submit" />
-            </form>
+              <button onClick={(e)=>{handleSubmit(e)}}>Submit</button>
           </div>
         </div>
       </div>
