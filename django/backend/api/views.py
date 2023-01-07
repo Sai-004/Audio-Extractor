@@ -3,38 +3,43 @@ from base.models import  Audio,Comment
 from .serializers import AudioSerializer,CommentSerializer,InputSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from base.utils import convert_to_mp3,youtube_to_mp3
+from base.utils import video_to_mp3,youtube_to_mp3,get_duration
 from django.core.files import File as DjangoFile
-from pytube import *
-import random
+from django.contrib.auth.models import User
 import os
+import uuid
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from datetime import timedelta
+import datetime
+
 class AudioListCreateView(generics.ListCreateAPIView):
     serializer_class=InputSerializer    
-    
     def get_queryset(self):
-        # user 
+        # user change
         user = get_object_or_404(User,username='radha')
         return Audio.objects.filter(uploaded_by=user)
     def post(self, request, *args, **kwargs):
         user = get_object_or_404(User,username='radha')
         serializer = InputSerializer(data=request.data)
-        
         if serializer.is_valid():
             #TODO  Yotube 
             if 'files' in request.FILES:
                 _file=request.FILES['files']
-                path = default_storage.save(str(str(random.randint(1000,2000))+".mp4"), ContentFile(_file.read()))
+                file_name=_file.name
+                _file.name= "_".join( _file.name.split())
+                path = default_storage.save(_file.name, ContentFile(_file.read()))
                 tmp_file = os.path.join(settings.MEDIA_ROOT, path)
-                print(tmp_file)
-                f=open(convert_to_mp3(tmp_file).name,"rb")
+                f=open(video_to_mp3(tmp_file).name,"rb")
+                video_length=get_duration(tmp_file)
+                
+                video_length=datetime.timedelta(seconds=video_length)
             else:
                 url = serializer.validated_data.get('url')
                 f=open(youtube_to_mp3(url),"rb")
-            audio=Audio(upload_file = DjangoFile(f,name=str(f)+".mp3"),uploaded_by=user)
+            audio=Audio(upload_file = DjangoFile(f,name=str(file_name)+".mp3"), uploaded_by=user, duration=video_length,name=file_name)
             audio.save()
             serializer = AudioSerializer(audio)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
