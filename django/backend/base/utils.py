@@ -5,6 +5,7 @@ import os
 import random
 
 def convert_to_mp3(temp_file_path,target_file_extension=".mp3"):
+    print(temp_file_path)
     with tempfile.TemporaryFile(mode='wb') as fw:
             fw.name=fw.name+target_file_extension
             subprocess.call('ffmpeg -i '+temp_file_path+' '+fw.name)

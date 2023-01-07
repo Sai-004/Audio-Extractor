@@ -8,38 +8,43 @@ export const Upload = () => {
   const [files,setFile]=useState()
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({url});
+  const handleSubmit = () => {
+    // console.log({url});
     const uploadData = new FormData();
-    uploadData.append('url',url);
+    // uploadData.append('url',url);
     uploadData.append('files',files,files.name);
-    fetch("http://localhost:8000/files", {
+    fetch("http://localhost:8000/api/", {
       method: "POST",
-      headers: { "content-type": "application/json" },
       body: uploadData
     }).then((res) => {
       alert('Uploaded successfully.')
-      navigate('/prev_uploads')
+      console.log(res)
+      // navigate('/prev_uploads')
     }).catch((err => {
       console.log(err.message)
     }))
   }
+
+  const getsong = () => {
+    console.log('clicked get');
+    fetch("http://localhost:8000/api/")
+  }
+
   return (
     <>
       <div className="container">
         <div className="card">
           <div className='card-title'>
             <h2>Upload</h2>
-              <label>
+              {/* <label>
                 URL:
-                <input value={url} type="url" name="name" onChange={e => setUrl(e.target.value) || ""} />
-              </label>
+                <input type="url" name="name" onChange={e => setUrl(e.target.value)} />
+              </label> */}
               <label>
                 Choose a video file:
-                <input type="file" value={files} onChange={e=> setFile(e.target.files[0]) || ""} />
+                <input type="file" onChange={e=> setFile(e.target.files[0])} />
               </label>
-              <button onClick={(e)=>{handleSubmit(e)}}>Submit</button>
+              <button onClick={()=>{handleSubmit()}}>Submit</button>
           </div>
         </div>
       </div>
