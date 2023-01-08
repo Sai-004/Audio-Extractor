@@ -27,7 +27,7 @@ export const Upload = () => {
 
   return (
     <>
-      <div className="container">
+      <div className="container disp">
         <div className="card">
           <div className='card-title'>
             <h2>Upload</h2>

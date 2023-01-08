@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 export const PrevUploads = () => {
 
     const [fileinfo, fileinfochange] = useState(null);
-
     useEffect(() => {
         fetch("http://localhost:8000/api").then((res) => {
             return res.json();
@@ -16,9 +16,31 @@ export const PrevUploads = () => {
         })
     }, [])
 
+    const DeleteFile = async (id) => {
+        await axios.delete(`http://localhost:8000/api/${id}`)
+        alert("File deleted successfully.")
+        window.location.reload();
+    }
+
+    const dateFormating = (e) => {
+        var strSplitDate = String(e).split(' ');
+        var date = new Date(strSplitDate[0]);
+        var dd = date.getDate();
+        var mm = date.getMonth() + 1;
+        var yyyy = date.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        date = dd + "-" + mm + "-" + yyyy;
+        return date.toString();
+    }
+
     return (
         <>
-            <div className="container">
+            <div className="container disp">
                 <div className="card">
                     <div className="card-title">
                         <h2>PrevUploads</h2>
@@ -40,15 +62,15 @@ export const PrevUploads = () => {
                             <tbody>
 
                                 {fileinfo &&
-                                    fileinfo.map((item,id_no) => (
+                                    fileinfo.map((item, id_no) => (
                                         <tr key={item.id}>
                                             <td>{++id_no}</td>
-                                            <td>{item.id}</td>
-                                            <td>-</td>
-                                            <td>{item.uploaded_on}</td>
-                                            <td>
-                                                <Link className='btn btn-success' to="/player">Play</Link>
-                                                <Link className='btn btn-danger' to="">Remove</Link>
+                                            <td>{item.name}</td>
+                                            <td>{item.duration}</td>
+                                            <td>{dateFormating(item.uploaded_on)}</td>
+                                            <td className='actions'>
+                                                <Link className='btn btn-success play' to={`/player/${item.id}`}>Play</Link>
+                                                <button className='btn btn-danger deletefile' onClick={() => DeleteFile(item.id)}>Delete</button>
                                             </td>
                                         </tr>
                                     ))

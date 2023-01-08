@@ -5,24 +5,26 @@ import {
   Route
 } from "react-router-dom";
 import { Navbar } from './components/navbar';
-import { Home } from './components/home';
 import { Upload } from './components/upload';
 import { Player } from './components/player';
+import { PlaySong } from "./components/playsong";
 import { PrevUploads } from "./components/Prev_uploads";
+import { Home } from "./components/home";
 
 export default function App() {
   return (
     <>
       <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navbar />}>
-          <Route index element={<Home />} />
-          <Route path="upload" element={<Upload />} />
-          <Route path="player" element={<Player />} />
-          <Route path="prev_uploads" element={<PrevUploads />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navbar />}>
+            <Route index element={<Home />} />
+            <Route path="upload" element={<Upload />} />
+            <Route path="player" element={<Player />} />
+            <Route path="player/:id/" element={<PlaySong />} />
+            <Route path="prev_uploads" element={<PrevUploads />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }

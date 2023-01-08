@@ -1,9 +1,24 @@
+import React, { useEffect, useState, useRef } from 'react'
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import Slider from './slider/slider.js';
 import ControlPanel from './controls/ControlPanel.js';
-import song from './Suncrown - Legend of the Forgotten Centuries.mp3'
-import { useState, useRef } from 'react';
 
-export const Player = () => {
+export const PlaySong = () => {
+    const [audiofile, setAudioFile] = useState("")
+
+    const { id } = useParams()
+
+    const getAudio = async () => {
+        const { data } = await axios.get(`http://localhost:8000/api/${id}`)
+        console.log(data)
+        setAudioFile(data)
+    }
+
+    useEffect(() => {
+        getAudio();
+    }, [])
+
     const [percentage, setPercentage] = useState(0)
     const [isPlaying, setIsPlaying] = useState(false)
     const [duration, setDuration] = useState(0)
@@ -43,7 +58,7 @@ export const Player = () => {
             <p id="title"></p>
             <h1>Player</h1>
             <Slider onChange={onChange} percentage={percentage} />
-            <audio id="song" ref={audioRef} src={song}
+            <audio id="song" ref={audioRef} src={audiofile.upload_file}
                 onLoadedData={(e) => {
                     setDuration(e.currentTarget.duration.toFixed(2))
                 }}

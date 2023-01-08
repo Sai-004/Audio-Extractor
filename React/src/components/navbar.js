@@ -22,7 +22,7 @@ export const Navbar = () => {
                                 <Link className="nav-link" to="/player">Player</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" aria-current="page" to="/prev_uploads">PrevUploads</Link>
+                                <Link className="nav-link" aria-current="page" to="/prev_uploads">Previous Uploads</Link>
                             </li>
                         </ul>
                         <form className="d-flex" role="search">
