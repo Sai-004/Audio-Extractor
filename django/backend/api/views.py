@@ -53,12 +53,24 @@ pass
 
 
 class AudioConvertDeleteView(generics.RetrieveDestroyAPIView):
+    allow_empty = False
     queryset=Audio.objects.all()
     serializer_class=AudioSerializer 
     pass
 class CommentListCreateView(generics.ListCreateAPIView):
+    allow_empty = False
     serializer_class=CommentSerializer 
-    
+    def get_queryset(self):
+        # user change
+        user = get_object_or_404(User,username='radha')
+        return Comment.objects.filter(added_by= user,audio=self.kwargs['pk'])
+    def list(self, request,**kwargs):
+        queryset = self.get_queryset()
+        serializer = CommentSerializer(queryset, many=True)
+        return Response(serializer.data)
     pass
 class CommentDeleteView(generics.DestroyAPIView):
+    allow_empty = False
+    queryset=Comment.objects.all()
+    serializer_class=CommentSerializer
     pass
