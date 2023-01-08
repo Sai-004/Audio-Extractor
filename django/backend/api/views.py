@@ -4,14 +4,11 @@ from .serializers import AudioSerializer,CommentSerializer,InputSerializer
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import status
-from base.utils import *
+from base.utils import Video,Youtube
 from django.core.files import File as DjangoFile
 from django.contrib.auth.models import User
 import os
 import uuid
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from django.conf import settings
 from django.shortcuts import get_object_or_404
 import datetime
 
@@ -28,24 +25,21 @@ class AudioListCreateView(generics.ListCreateAPIView):
             #TODO  Yotube 
             if 'files' in request.FILES:
                 _file=request.FILES['files']
-                file_name=_file.name
-                _file.name= "_".join( _file.name.split())
-                path = default_storage.save(_file.name, ContentFile(_file.read()))
-                tmp_file = os.path.join(settings.MEDIA_ROOT, path)
-                f=open(video_to_mp3(tmp_file).name,"rb")
-                video_length=get_duration(tmp_file)
-                
-                video_length=datetime.timedelta(seconds=video_length)
+                video_obj=Video(_file)
+                video_obj.video_to_mp3()
+                video_length=datetime.timedelta(seconds=video_obj.length)
+                name=video_obj.name
+                file_name=video_obj.rand
+                f=open(video_obj.out_file,"rb")
             else:
                 url = serializer.validated_data.get('url')
                 yt_obj=Youtube(url)
-                yt_obj.get_video_name()
-                yt_obj.get_duration()
                 yt_obj.youtube_to_mp3()
-                print(yt_obj.length)
-                print(yt_obj.name)
+                name= yt_obj.name
+                file_name=yt_obj.rand
+                video_length=datetime.timedelta(seconds=yt_obj.length) 
                 f=open(yt_obj.file_path,"rb")
-            audio=Audio(upload_file = DjangoFile(f,name=str(file_name)+".mp3"), uploaded_by=user, duration=video_length,name=file_name)
+            audio=Audio(upload_file = DjangoFile(f,name=str(file_name)+".mp3"), uploaded_by=user, duration=video_length,name=name)
             audio.save()
             serializer = AudioSerializer(audio)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -63,6 +57,8 @@ class AudioConvertDeleteView(generics.RetrieveDestroyAPIView):
     serializer_class=AudioSerializer 
     pass
 class CommentListCreateView(generics.ListCreateAPIView):
+    serializer_class=CommentSerializer 
+    
     pass
 class CommentDeleteView(generics.DestroyAPIView):
     pass
