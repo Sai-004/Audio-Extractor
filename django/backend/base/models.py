@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 import uuid
-import random
 # Create your models here.
 
 def get_user_file_folder(instance, filename):
@@ -18,6 +17,7 @@ class Audio(models.Model):
     
     
 class Comment(models.Model):
+    id = models.UUIDField(primary_key = True,default = uuid.uuid4,editable = False)
     text=models.CharField(max_length=256)
     audio=models.ForeignKey(Audio,related_name='audio',on_delete=models.CASCADE,default=None,blank=True)
     added_on=models.DurationField()
