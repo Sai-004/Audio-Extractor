@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import { Loading } from './loading'
 
 export const Upload = () => {
 
   const [url, setUrl] = useState("")
   const [files,setFile]=useState()
+  const [loading, setLoading] = useState(false)
+
   const navigate = useNavigate();
 
   const handleSubmit = () => {
@@ -13,10 +15,12 @@ export const Upload = () => {
     const uploadData = new FormData();
     // uploadData.append('url',url);
     uploadData.append('files',files,files.name);
+    setLoading(true)
     fetch("http://localhost:8000/api/", {
       method: "POST",
       body: uploadData
     }).then((res) => {
+      setLoading(false)
       alert('Uploaded successfully.')
       console.log(res)
       navigate('/prev_uploads')
@@ -27,7 +31,7 @@ export const Upload = () => {
 
   return (
     <>
-      <div className="container disp">
+      {loading ? (<Loading/>): (<div className="container disp">
         <div className="card">
           <div className='card-title'>
             <h2>Upload</h2>
@@ -42,7 +46,7 @@ export const Upload = () => {
               <button onClick={()=>{handleSubmit()}}>Submit</button>
           </div>
         </div>
-      </div>
+      </div>)}
     </>
   )
 }

@@ -6,6 +6,7 @@ import axios from 'axios';
 export const PrevUploads = () => {
 
     const [fileinfo, fileinfochange] = useState(null);
+    
     useEffect(() => {
         fetch("http://localhost:8000/api").then((res) => {
             return res.json();

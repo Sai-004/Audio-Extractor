@@ -10,6 +10,7 @@ import { Player } from './components/player';
 import { PlaySong } from "./components/playsong";
 import { PrevUploads } from "./components/Prev_uploads";
 import { Home } from "./components/home";
+import { Loading } from "./components/loading";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Navbar />}>
             <Route index element={<Home />} />
+            <Route path="loading" element={<Loading/>}/>
             <Route path="upload" element={<Upload />} />
             <Route path="player" element={<Player />} />
             <Route path="player/:id/" element={<PlaySong />} />
