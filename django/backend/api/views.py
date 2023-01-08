@@ -17,13 +17,9 @@ import datetime
 # from rest_framework_simplejwt.views import TokenObtainPairView
 
 class AudioListCreateView(generics.ListCreateAPIView):
-    serializer_class=InputSerializer    
-    def get_queryset(self):
-        # user change
-        user = get_object_or_404(User,username='msai')
-        return Audio.objects.filter(uploaded_by=user)
+    serializer_class=InputSerializer 
+    queryset=Audio.objects.all()   
     def post(self, request, *args, **kwargs):
-        user = get_object_or_404(User,username='msai')
         serializer = InputSerializer(data=request.data)
         if serializer.is_valid():
             #TODO  Yotube 
@@ -43,18 +39,16 @@ class AudioListCreateView(generics.ListCreateAPIView):
                 file_name=yt_obj.rand
                 video_length=datetime.timedelta(seconds=yt_obj.length) 
                 f=open(yt_obj.file_path,"rb")
-            audio=Audio(upload_file = DjangoFile(f,name=str(file_name)+".mp3"), uploaded_by=user, duration=video_length,name=name)
+            audio=Audio(upload_file = DjangoFile(f,name=str(file_name)+".mp3"),duration=video_length,name=name)
             audio.save()
             serializer = AudioSerializer(audio)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = AudioSerializer(queryset, many=True)
         return Response(serializer.data)
 pass
-
 
 class AudioConvertDeleteView(generics.RetrieveDestroyAPIView):
     allow_empty = False
@@ -66,8 +60,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
     serializer_class=CommentSerializer 
     def get_queryset(self):
         # user change
-        user = get_object_or_404(User,username='msai')
-        return Comment.objects.filter(added_by= user,audio=self.kwargs['pk'])
+        return Comment.objects.filter(audio=self.kwargs['pk'])
     def list(self, request,**kwargs):
         queryset = self.get_queryset()
         serializer = CommentSerializer(queryset, many=True)
