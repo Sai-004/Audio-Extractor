@@ -3,7 +3,7 @@ from base.models import  Audio,Comment
 from .serializers import AudioSerializer,CommentSerializer,InputSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from base.utils import video_to_mp3,youtube_to_mp3,get_duration
+from base.utils import *
 from django.core.files import File as DjangoFile
 from django.contrib.auth.models import User
 import os
@@ -12,7 +12,6 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from datetime import timedelta
 import datetime
 
 class AudioListCreateView(generics.ListCreateAPIView):
@@ -38,7 +37,13 @@ class AudioListCreateView(generics.ListCreateAPIView):
                 video_length=datetime.timedelta(seconds=video_length)
             else:
                 url = serializer.validated_data.get('url')
-                f=open(youtube_to_mp3(url),"rb")
+                yt_obj=Youtube(url)
+                yt_obj.get_video_name()
+                yt_obj.get_duration()
+                yt_obj.youtube_to_mp3()
+                print(yt_obj.length)
+                print(yt_obj.name)
+                f=open(yt_obj.file_path,"rb")
             audio=Audio(upload_file = DjangoFile(f,name=str(file_name)+".mp3"), uploaded_by=user, duration=video_length,name=file_name)
             audio.save()
             serializer = AudioSerializer(audio)
