@@ -1,4 +1,5 @@
 from rest_framework import generics
+# from rest_framework.decorators import api_view
 from base.models import  Audio,Comment
 from .serializers import AudioSerializer,CommentSerializer,InputSerializer
 from rest_framework.response import Response
@@ -12,14 +13,17 @@ import uuid
 from django.shortcuts import get_object_or_404
 import datetime
 
+# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+# from rest_framework_simplejwt.views import TokenObtainPairView
+
 class AudioListCreateView(generics.ListCreateAPIView):
     serializer_class=InputSerializer    
     def get_queryset(self):
         # user change
-        user = get_object_or_404(User,username='radha')
+        user = get_object_or_404(User,username='msai')
         return Audio.objects.filter(uploaded_by=user)
     def post(self, request, *args, **kwargs):
-        user = get_object_or_404(User,username='radha')
+        user = get_object_or_404(User,username='msai')
         serializer = InputSerializer(data=request.data)
         if serializer.is_valid():
             #TODO  Yotube 
@@ -62,7 +66,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
     serializer_class=CommentSerializer 
     def get_queryset(self):
         # user change
-        user = get_object_or_404(User,username='radha')
+        user = get_object_or_404(User,username='msai')
         return Comment.objects.filter(added_by= user,audio=self.kwargs['pk'])
     def list(self, request,**kwargs):
         queryset = self.get_queryset()
@@ -74,3 +78,27 @@ class CommentDeleteView(generics.DestroyAPIView):
     queryset=Comment.objects.all()
     serializer_class=CommentSerializer
     pass
+
+# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     @classmethod
+#     def get_token(cls, user):
+#         token = super().get_token(user)
+
+#         # Add custom claims
+#         token['username'] = user.username
+#         # ...
+
+#         return token
+
+# class MyTokenObtainPairView(TokenObtainPairView):
+#     serializer_class = MyTokenObtainPairSerializer
+
+
+
+# @api_view(['GET'])
+# def getRoutes(request):
+#     routes = [
+#         'api/token',
+#         '/api/token/refresh',
+#     ]
+#     return Response(routes)
