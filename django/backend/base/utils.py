@@ -1,41 +1,60 @@
 import subprocess
-import tempfile
 from pytube import YouTube
 import os
-import random
 import uuid
 from subprocess import Popen, PIPE
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
 
-def get_duration(_file):
-    cmd = 'ffprobe -i {} -show_entries format=duration -v quiet -of csv="p=0"'.format(_file)
+def get_duration(self):
+    cmd = 'ffprobe -i {} -show_entries format=duration -v quiet -of csv="p=0"'.format(self.input_file_path)
     output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
     return round(float(output))
-def video_to_mp3(temp_file_path,target_file_extension=".mp3"):
-    with tempfile.TemporaryFile(mode='wb') as fw:
-            fw.name=fw.name+target_file_extension
-            cmd='ffmpeg -i '+temp_file_path+' '+fw.name
-            cmd= Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,shell=True)
-            out, err = cmd.communicate()
-            if cmd.returncode == 0 :
-                print ("Job done.")
-            else:
-                print ("ERROR")
-                print (out)
-                print(fw.name)
-    return fw
+
+class Video:
+    
+    def __init__(self, _file):
+        self._file = _file
+        self.name="_".join(self._file.name.split())
+        input_file_extension = os.path.splitext(str(self._file))[1]
+        self.input_file_name=str(uuid.uuid1())+input_file_extension
+        self.input_file = default_storage.save(self.input_file_name, ContentFile(self._file.read()))
+        self.input_file_path = default_storage.path(self.input_file)
+        self.length = get_duration(self)        
+
+    def video_to_mp3(self,target_file_extension=".mp3"):
+        self.rand=str(uuid.uuid1())
+        file_name=self.rand+target_file_extension
+        full_filename = os.path.join(settings.MEDIA_ROOT,'temp',file_name)
+        fw=open(file_name,mode='wb')
+        print(full_filename)
+        cmd='ffmpeg -i '+self.input_file_path+' '+full_filename
+        cmd= Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,shell=True)
+        out, err = cmd.communicate()
+        if cmd.returncode == 0 :
+            print ("Job done.")
+        else:
+            print ("ERROR")
+            print (out)
+            print(fw.name)
+        self.out_file=full_filename
+        
+
 class Youtube:
     def __init__(self, url):
         self.url = url
+        self.youtube_obj=YouTube(url)
         self.audio = YouTube(url).streams.filter(only_audio=True).first()
-    def get_video_name(self):
         self.name = self.audio.default_filename
-    def get_duration(self):
-        self.length = self.audio.length
+        self.name= "_".join(self.name.split())
+        self.length = self.youtube_obj.length
+    
     def youtube_to_mp3(self,target_file_extension=".mp3"):
-        file_name=str(uuid.uuid1())+target_file_extension
-        out_file = video.download(output_path = 'temp',filename=file_name)
+        self.rand=str(uuid.uuid1())
+        file_name=self.rand+target_file_extension
+        out_file = self.audio.download(output_path = 'media/temp',filename=file_name)
         base, ext = os.path.splitext(out_file)
         new_file = base + target_file_extension
         os.rename(out_file, new_file)
-        print(video.title + " has been successfully downloaded.")
         self.file_path=new_file
