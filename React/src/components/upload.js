@@ -5,25 +5,37 @@ import { Loading } from './loading'
 export const Upload = () => {
 
   const [url, setUrl] = useState("")
-  const [files,setFile]=useState()
+  const [files, setFile] = useState()
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate();
 
   const handleSubmit = () => {
-    // console.log({url});
+    console.log({ url });
+    console.log({ files });
     const uploadData = new FormData();
-    // uploadData.append('url',url);
-    uploadData.append('files',files,files.name);
+    if (url === "") {
+      uploadData.append('files', files, files.name);
+    } else if (files === undefined) {
+      uploadData.append('url', url);
+    } else {
+      alert('Please upload a file.')
+      return;
+    }
     setLoading(true)
     fetch("http://localhost:8000/api/", {
       method: "POST",
       body: uploadData
     }).then((res) => {
-      setLoading(false)
-      alert('Uploaded successfully.')
-      console.log(res)
-      navigate('/prev_uploads')
+      setLoading(false);
+      if (res.status === 201) {
+        alert('Uploaded successfully.')
+        console.log(res)
+        navigate('/prev_uploads')
+      } else {
+        alert("Invalid input.");
+        return;
+      }
     }).catch((err => {
       console.log(err.message)
     }))
@@ -31,19 +43,19 @@ export const Upload = () => {
 
   return (
     <>
-      {loading ? (<Loading/>): (<div className="container disp">
+      {loading ? (<Loading />) : (<div className="container disp">
         <div className="card">
           <div className='card-title'>
             <h2>Upload</h2>
-              {/* <label>
-                URL:
-                <input type="url" name="name" onChange={e => setUrl(e.target.value)} />
-              </label> */}
-              <label>
-                Choose a video file:
-                <input type="file" onChange={e=> setFile(e.target.files[0])} />
-              </label>
-              <button onClick={()=>{handleSubmit()}}>Submit</button>
+            <label>
+              URL:
+              <input type="text" value={url} onChange={e => setUrl(e.target.value)} />
+            </label>
+            <label>
+              Choose a video file:
+              <input type="file" onChange={e => setFile(e.target.files[0])} />
+            </label>
+            <button onClick={() => { handleSubmit() }}>Submit</button>
           </div>
         </div>
       </div>)}

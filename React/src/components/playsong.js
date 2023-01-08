@@ -3,18 +3,15 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Slider from './slider/slider.js';
 import ControlPanel from './controls/ControlPanel.js';
-import { Loading } from './loading.js';
 
 export const PlaySong = () => {
     const [audiofile, setAudioFile] = useState("")
-    const [loading, setLoading] = useState(false)
 
     const { id } = useParams()
 
     const getAudio = async () => {
         const { data } = await axios.get(`http://localhost:8000/api/${id}`)
         console.log(data)
-        setLoading(true)
         setAudioFile(data)
     }
 
@@ -56,25 +53,23 @@ export const PlaySong = () => {
         setCurrentTime(time.toFixed(2))
     }
     return (
-        <>
-            {loading ? (<div className="app-container">
-                <div id="cover"></div>
-                <p id="title"></p>
-                <h1>Player</h1>
-                <Slider onChange={onChange} percentage={percentage} />
-                <audio id="song" ref={audioRef} src={audiofile.upload_file}
-                    onLoadedData={(e) => {
-                        setDuration(e.currentTarget.duration.toFixed(2))
-                    }}
-                    onTimeUpdate={getCurrentDuration}
-                ></audio>
-                <ControlPanel
-                    play={play}
-                    isPlaying={isPlaying}
-                    duration={duration}
-                    currentTime={currentTime}
-                />
-            </div>) : <Loading/> }</>
-
+        <div className="app-container">
+            <div id="cover"></div>
+            <p id="title"></p>
+            <h1>Player</h1>
+            <Slider onChange={onChange} percentage={percentage} />
+            <audio id="song" ref={audioRef} src={audiofile.upload_file}
+                onLoadedData={(e) => {
+                    setDuration(e.currentTarget.duration.toFixed(2))
+                }}
+                onTimeUpdate={getCurrentDuration}
+            ></audio>
+            <ControlPanel
+                play={play}
+                isPlaying={isPlaying}
+                duration={duration}
+                currentTime={currentTime}
+            />
+        </div>
     );
 }

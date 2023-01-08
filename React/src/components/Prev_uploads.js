@@ -2,15 +2,19 @@ import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { Loading } from './loading'
+
 
 export const PrevUploads = () => {
 
     const [fileinfo, fileinfochange] = useState(null);
-    
+    const [loading, setLoading] = useState(true)
+
     useEffect(() => {
         fetch("http://localhost:8000/api").then((res) => {
             return res.json();
         }).then((resp) => {
+            setLoading(false);
             fileinfochange(resp);
         }).catch((err) => {
             console.log(err.message);
@@ -41,7 +45,7 @@ export const PrevUploads = () => {
 
     return (
         <>
-            <div className="container disp">
+            {loading ? (<Loading/>) : (<div className="container disp">
                 <div className="card">
                     <div className="card-title">
                         <h2>PrevUploads</h2>
@@ -82,7 +86,7 @@ export const PrevUploads = () => {
                         </table>
                     </div>
                 </div>
-            </div>
+            </div>)}
         </>
     );
 }

@@ -1,9 +1,5 @@
 import ReactDOM from "react-dom/client";
-import {
-  BrowserRouter,
-  Routes,
-  Route
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from './components/navbar';
 import { Upload } from './components/upload';
 import { Player } from './components/player';
@@ -19,7 +15,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Navbar />}>
             <Route index element={<Home />} />
-            <Route path="loading" element={<Loading/>}/>
+            <Route path="loading" element={<Loading />} />
             <Route path="upload" element={<Upload />} />
             <Route path="player" element={<Player />} />
             <Route path="player/:id/" element={<PlaySong />} />
