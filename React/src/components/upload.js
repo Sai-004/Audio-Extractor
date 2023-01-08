@@ -31,7 +31,7 @@ export const Upload = () => {
       if (res.status === 201) {
         alert('Uploaded successfully.')
         console.log(res)
-        navigate('/prev_uploads')
+        navigate('/my_uploads')
       } else {
         alert("Invalid input.");
         return;
