@@ -25,20 +25,20 @@ class AudioListCreateView(generics.ListCreateAPIView):
             #TODO  Yotube 
             if 'files' in request.FILES:
                 _file=request.FILES['files']
-                video_obj=Video(_file)
-                video_obj.video_to_mp3()
-                video_length=datetime.timedelta(seconds=video_obj.length)
-                name=video_obj.name
-                file_name=video_obj.rand
-                f=open(video_obj.out_file,"rb")
+                _obj=Video(_file)
+                _obj.video_to_mp3()
+                video_length=datetime.timedelta(seconds=_obj.length)
+                name=_obj.name
+                file_name=_obj.rand
+                f=open(_obj.out_file,"rb")
             else:
                 url = serializer.validated_data.get('url')
-                yt_obj=Youtube(url)
-                yt_obj.youtube_to_mp3()
-                name= yt_obj.name
-                file_name=yt_obj.rand
-                video_length=datetime.timedelta(seconds=yt_obj.length) 
-                f=open(yt_obj.file_path,"rb")
+                _obj=Youtube(url)
+                _obj.youtube_to_mp3()
+                name= _obj.name
+                file_name=_obj.rand
+                video_length=datetime.timedelta(seconds=_obj.length) 
+                f=open(_obj.file_path,"rb")
             audio=Audio(upload_file = DjangoFile(f,name=str(file_name)+".mp3"),duration=video_length,name=name)
             audio.save()
             serializer = AudioSerializer(audio)

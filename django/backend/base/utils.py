@@ -21,13 +21,12 @@ class Video:
         self.input_file_name=str(uuid.uuid1())+input_file_extension
         self.input_file = default_storage.save(self.input_file_name, ContentFile(self._file.read()))
         self.input_file_path = default_storage.path(self.input_file)
+        print(self.input_file_path)
         self.length = get_duration(self)        
-
     def video_to_mp3(self,target_file_extension=".mp3"):
         self.rand=str(uuid.uuid1())
         file_name=self.rand+target_file_extension
         full_filename = os.path.join(settings.MEDIA_ROOT,'temp',file_name)
-        fw=open(file_name,mode='wb')
         print(full_filename)
         cmd='ffmpeg -i '+self.input_file_path+' '+full_filename
         cmd= Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,shell=True)
@@ -37,9 +36,7 @@ class Video:
         else:
             print ("ERROR")
             print (out)
-            print(fw.name)
         self.out_file=full_filename
-        
 
 class Youtube:
     def __init__(self, url):
