@@ -1,5 +1,9 @@
 # Audio-Extractor
-FullStack Web Application for converting vidio file to audio file with ability to add comments at timestamps.
+FullStack Web Application for converting vidio file to audio file with ability to add comments at timestamps.<br/>
+> Using this application you can convert different format video (.mp4,.mov,.mkv,.avi,.webm) files to Audio (.mp3) files.<br/>
+* Application uses FFmpeg to convert the file into audio format.<br/>
+> Django is used for the realtime backend database and framework.<br/>
+> React is used for the frontend development of the WebApplication.
 
 ## Installation
 > Frontend
